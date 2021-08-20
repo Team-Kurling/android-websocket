@@ -21,6 +21,7 @@ import android.nfc.tech.NfcV;
 import android.nfc.tech.TagTechnology;
 import java.net.URI;
 import java.net.URISyntaxException;
+//
 
 import tech.gusavila92.websocketclient.WebSocketClient;
 
