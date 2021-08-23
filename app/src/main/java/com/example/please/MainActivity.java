@@ -191,6 +191,12 @@ public class MainActivity extends AppCompatActivity {
             nowStatus=false;
             webSocketClient.close();
         }
+        if(!nowMachine.equals(out)&& nowStatus){
+            webSocketClient.send("reconnect");
+            webSocketClient.send(out);
+            count = (TextView) findViewById(R.id.count);
+            count.setText("");
+        }
         nowMachine=out;
         nowStatus=true;
         return out;
