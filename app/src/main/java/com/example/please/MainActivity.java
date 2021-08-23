@@ -39,20 +39,19 @@ public class MainActivity extends AppCompatActivity {
 
     //list of NFC technologies detected:
     //nfc 기능을 사용하고 구현하기 위해 필요한 기술적 세팅으로 보면 될듯
-    //하나하나 세세하게 기능을 명시한 사람은 아직 찾지 못함.
     private final String[][] techList = new String[][]{
             new String[] {
 
-                    NfcA.class.getName(),
-                    NfcB.class.getName(),
-                    NfcF.class.getName(),
-                    NfcV.class.getName(),
-                    NdefFormatable.class.getName(),
-                    TagTechnology.class.getName(),
+                    NfcA.class.getName(), //NFC-A (ISO 14443-3A) 프로퍼티들과 I/O 기능을 제공
+                    NfcB.class.getName(), //NFC-B (ISO 14443-3B) 프로퍼티들과 I/O 기능을 제공.
+                    NfcF.class.getName(), //NFC-F (JIS 6319-4) 프로퍼티들과 I/O 기능을 제공.
+                    NfcV.class.getName(), //NFC-V (ISO 15693) 프로퍼티들과 I/O 기능을 제공.
+                    NdefFormatable.class.getName(), //NDEF 형식으로 접근 가능한 태그들을 위한 정형화된 기능을 제공.
+                    TagTechnology.class.getName(), //모든 태그 기술 클래스들이 구현해야 할 인터페이스.
                     IsoDep.class.getName(),
-                    MifareClassic.class.getName(),
-                    MifareUltralight.class.getName(),
-                    Ndef.class.getName()
+                    MifareClassic.class.getName(), //만약 안드로이드 장비가 MIFARE를 지원한다면 MIFARE Classic 프로퍼티들과 I/O 에 접근할 수 있게 해줌
+                    MifareUltralight.class.getName(), //만약 안드로이드 장비가 MIFARE를 지원한다면 MIFARE Ultralight 프로퍼티들과 I/O 에 접근할 수 있는 기능을 제공.
+                    Ndef.class.getName() //NDEF data에 접근할 수 있도록 지원하고 NDEF 형식의 NFC tags와 연동할 수 있는 기능을 제공.
             }
     };
 
