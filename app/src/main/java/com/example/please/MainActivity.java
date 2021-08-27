@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private void createWebSocketClient() {
         URI uri;
         try {
-            uri = new URI("ws://172.30.1.10:80/"); // "ws://ip주소:포트/"로 서버랑 연결
+            uri = new URI("ws://172.30.1.22:3000/"); // "ws://ip주소:포트/"로 서버랑 연결
         }
         catch (URISyntaxException e) {
             e.printStackTrace();
