@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        createWebSocketClient();  //웹소켓 클라이언트 생성 및 가동(밑에 메서드 정의)
+        //createWebSocketClient();  //웹소켓 클라이언트 생성 및 가동(밑에 메서드 정의)
 
     }
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private void createWebSocketClient() {
         URI uri;
         try {
-            uri = new URI("ws://172.30.1.22:3000/"); // "ws://ip주소:포트/"로 서버랑 연결
+            uri = new URI("ws://203.234.96.131:8989/"); // "ws://ip주소:포트/"로 서버랑 연결
         }
         catch (URISyntaxException e) {
             e.printStackTrace();
@@ -118,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        webSocketClient.setConnectTimeout(10000); //해당 시간 안에 서버와 연결 못하면 실패
-        webSocketClient.setReadTimeout(60000); //해당 시간 안에 데이터 못 받아오면 실패
+        //webSocketClient.setConnectTimeout(10000); //해당 시간 안에 서버와 연결 못하면 실패
+        //webSocketClient.setReadTimeout(60000); //해당 시간 안에 데이터 못 받아오면 실패
         webSocketClient.addHeader("Origin", "http://developer.example.com");
-        webSocketClient.enableAutomaticReconnection(5000); //자동 재연결 관련
+        //webSocketClient.enableAutomaticReconnection(5000); //자동 재연결 관련
         webSocketClient.connect(); //연결시도
 
     }
@@ -156,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
         if(intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) { //태그된 정보를 넘겨받음
             myUID = (TextView) findViewById(R.id.machine); //운동기구 이름 띄우는 TextView 찾아 연결
             myUID.setText(ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID))); //트리거 이름 받아서 화면에 띄움
+
+            createWebSocketClient();
+            //Log.v("test", "test: " + intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
             webSocketClient.send(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)); //서버로 트리거 정보 전송
         }
 
@@ -175,13 +178,13 @@ public class MainActivity extends AppCompatActivity {
             out += hex[i];
         }
         switch (out) { //태그별로 트리거(별칭) 지정
-            case "042AA0627B7280":
+            case "042F7F82287380":
                 out = "Letpulldown1";
                 break;
-            case "0426A0627B7280":
+            case "04537982287381":
                 out = "Letpulldown2";
                 break;
-            case "0422A0627B7280":
+            case "044F7982287381":
                 out = "Letpulldown3";
                 break;
             case "041EA0627B7280":
@@ -191,16 +194,24 @@ public class MainActivity extends AppCompatActivity {
                 out = "This is not mine";
                 break;
         }
+
+        Log.v("test", "nowStatus: " + nowStatus);
+        Log.v("test", "nowMachine: " + nowMachine);
+        Log.v("test", "out: " + out);
+
         if(nowMachine.equals(out)){ //같은 nfc태그를 두번 태그한 경우
             //->연결 종료, 현상태 false
             nowStatus=false;
             webSocketClient.close();
+            //Log.v("test", "test: " + nowStatus);
         }
         if(!nowMachine.equals(out)&& nowStatus){ //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
             //즉 현재 운동기구(nowMachine)과 태그한 기구정보(out)이 같고, 현재 사용 중(true)인 경우
 
-            webSocketClient.send("reconnect"); //reconnect 신호를 서버에 보냄->서버 측 코드에서 기구정보를 다시 읽을 준비함
-            webSocketClient.send(out); //서버에 새로 인식한 기구정보를 보냄
+            //webSocketClient.send("reconnect"); //reconnect 신호를 서버에 보냄->서버 측 코드에서 기구정보를 다시 읽을 준비함
+            //webSocketClient.send(out); //서버에 새로 인식한 기구정보를 보냄
+
+            webSocketClient.close();
             count = (TextView) findViewById(R.id.count);
             count.setText(""); //횟수 초기화
         }
