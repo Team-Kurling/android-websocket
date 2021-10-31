@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
             public void onTextReceived(String message) {
                 System.out.println("onTextReceived");
                 System.out.println(message);
-                TextView count = findViewById(R.id.count);
-                count.setText(message); //화면에 띄우는 텍스트 바뀜 (횟수 바뀜)
+                TextView countTextView = findViewById(R.id.count);
+                countTextView.setText(message); //화면에 띄우는 텍스트 바뀜 (횟수 바뀜)
                 nowCount = message; //현재 횟수 안드로이드에 저장
             }
 
@@ -142,9 +142,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) { //태그된 정보 새로 받아옴
         super.onNewIntent(intent);
         if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) { //태그된 정보를 넘겨받음
-            TextView myUID = findViewById(R.id.machine); //운동기구 이름 띄우는 TextView 찾아 연결
+            TextView machineTextView = findViewById(R.id.machine); //운동기구 이름 띄우는 TextView 찾아 연결
             String machineName = getMachineNameFrom(ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
-            myUID.setText(machineName); //트리거 이름 받아서 화면에 띄움
+            machineTextView.setText(machineName); //트리거 이름 받아서 화면에 띄움
             updateMachine(machineName);
 
             createWebSocketClient();
@@ -206,8 +206,8 @@ public class MainActivity extends AppCompatActivity {
             //즉 현재 운동기구(taggedMachine)과 태그한 기구정보(machineName)이 같고, 현재 사용 중(true)인 경우
 
             webSocketClient.close();
-            TextView count = findViewById(R.id.count);
-            count.setText(""); //횟수 초기화
+            TextView countTextView = findViewById(R.id.count);
+            countTextView.setText(""); //횟수 초기화
         }
         taggedMachine = machineName; //태그한 기구 트리거정보 안드로이드에 저장
         isConnectedWithEsp32 = true; //현재 사용 중(true)
