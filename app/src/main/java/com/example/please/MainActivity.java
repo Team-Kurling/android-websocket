@@ -149,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) { //태그된 정보를 넘겨받음
             myUID = (TextView) findViewById(R.id.machine); //운동기구 이름 띄우는 TextView 찾아 연결
-            myUID.setText(getMachineNameFrom(ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)))); //트리거 이름 받아서 화면에 띄움
+            String machineName = getMachineNameFrom(ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
+            myUID.setText(machineName); //트리거 이름 받아서 화면에 띄움
 
             createWebSocketClient();
             webSocketClient.send(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)); //서버로 트리거 정보 전송
