@@ -170,6 +170,10 @@ public class MainActivity extends AppCompatActivity {
             i = in& 0x0f;
             out += hex[i];
         }
+        return getMachineNameFrom(out);
+    }
+
+    private String getMachineNameFrom(String out){
         switch (out) { //태그별로 트리거(별칭) 지정
             case "042F7F82287380":
                 out = "Letpulldown1";
