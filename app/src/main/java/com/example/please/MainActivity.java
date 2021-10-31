@@ -30,18 +30,16 @@ import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView count; //화면에 운동 횟수 띄움
-
-    TextView myUID; //운동기구 이름
-    String taggedMachine = ""; //현재 기구이름 안드로이드에 임시저장
-    boolean isConnectedWithEsp32 = false; //현재 상태: 연결 상태일 경우-true,  비연결-false
+    String taggedMachine = "";
+    boolean isConnectedWithEsp32 = false;
     String nowCount; //현재 횟수 안드로이드에 임시저장
+
+    private WebSocketClient webSocketClient;
 
     //list of NFC technologies detected:
     //nfc 기능을 사용하고 구현하기 위해 필요한 기술적 세팅으로 보면 될듯
     private final String[][] techList = new String[][]{
             new String[]{
-
                     NfcA.class.getName(), //NFC-A (ISO 14443-3A) 프로퍼티들과 I/O 기능을 제공
                     NfcB.class.getName(), //NFC-B (ISO 14443-3B) 프로퍼티들과 I/O 기능을 제공.
                     NfcF.class.getName(), //NFC-F (JIS 6319-4) 프로퍼티들과 I/O 기능을 제공.
@@ -61,9 +59,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-
-    private WebSocketClient webSocketClient; //웹소켓 클라이언트 생성
-
     private void createWebSocketClient() {
         URI uri;
         try {
@@ -78,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onOpen() {
                 System.out.println("onOpen");
-            } //연결됨
+            }
 
             @Override
-            public void onTextReceived(String message) { //esp32서버로부터 메세지받음
+            public void onTextReceived(String message) {
                 System.out.println("onTextReceived");
                 System.out.println(message);
-                count = (TextView) findViewById(R.id.count); //xml에서 횟수띄우는 TextView를 찾아 연결
+                TextView count = findViewById(R.id.count);
                 count.setText(message); //화면에 띄우는 텍스트 바뀜 (횟수 바뀜)
                 nowCount = message; //현재 횟수 안드로이드에 저장
             }
@@ -148,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) { //태그된 정보 새로 받아옴
         super.onNewIntent(intent);
         if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) { //태그된 정보를 넘겨받음
-            myUID = (TextView) findViewById(R.id.machine); //운동기구 이름 띄우는 TextView 찾아 연결
+            TextView myUID = findViewById(R.id.machine); //운동기구 이름 띄우는 TextView 찾아 연결
             String machineName = getMachineNameFrom(ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
             myUID.setText(machineName); //트리거 이름 받아서 화면에 띄움
             updateMachine(machineName);
@@ -209,14 +204,13 @@ public class MainActivity extends AppCompatActivity {
             webSocketClient.close();
         }
         if (!taggedMachine.equals(machineName) && isConnectedWithEsp32) { //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
-            //즉 현재 운동기구(nowMachine)과 태그한 기구정보(out)이 같고, 현재 사용 중(true)인 경우
+            //즉 현재 운동기구(taggedMachine)과 태그한 기구정보(machineName)이 같고, 현재 사용 중(true)인 경우
 
             webSocketClient.close();
-            count = (TextView) findViewById(R.id.count);
+            TextView count = findViewById(R.id.count);
             count.setText(""); //횟수 초기화
         }
         taggedMachine = machineName; //태그한 기구 트리거정보 안드로이드에 저장
         isConnectedWithEsp32 = true; //현재 사용 중(true)
     }
-
 }
