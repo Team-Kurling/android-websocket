@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView myUID; //운동기구 이름
     String nowMachine = ""; //현재 기구이름 안드로이드에 임시저장
-    boolean nowStatus = false; //현재 상태: 연결 상태일 경우-true,  비연결-false
+    boolean isConnectedWithEsp32 = false; //현재 상태: 연결 상태일 경우-true,  비연결-false
     String nowCount; //현재 횟수 안드로이드에 임시저장
 
     //list of NFC technologies detected:
@@ -193,16 +193,16 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        Log.v("test", "nowStatus: " + nowStatus);
+        Log.v("test", "nowStatus: " + isConnectedWithEsp32);
         Log.v("test", "nowMachine: " + nowMachine);
         Log.v("test", "out: " + machineName);
 
         if (nowMachine.equals(machineName)) { //같은 nfc태그를 두번 태그한 경우
             //->연결 종료, 현상태 false
-            nowStatus = false;
+            isConnectedWithEsp32 = false;
             webSocketClient.close();
         }
-        if (!nowMachine.equals(machineName) && nowStatus) { //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
+        if (!nowMachine.equals(machineName) && isConnectedWithEsp32) { //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
             //즉 현재 운동기구(nowMachine)과 태그한 기구정보(out)이 같고, 현재 사용 중(true)인 경우
 
             webSocketClient.close();
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             count.setText(""); //횟수 초기화
         }
         nowMachine = machineName; //태그한 기구 트리거정보 안드로이드에 저장
-        nowStatus = true; //현재 사용 중(true)
+        isConnectedWithEsp32 = true; //현재 사용 중(true)
         return machineName; //기구 트리거 반환
     }
 
