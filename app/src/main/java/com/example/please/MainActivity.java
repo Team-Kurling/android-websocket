@@ -173,44 +173,45 @@ public class MainActivity extends AppCompatActivity {
         return getMachineNameFrom(out);
     }
 
-    private String getMachineNameFrom(String out){
-        switch (out) { //태그별로 트리거(별칭) 지정
-            case "042F7F82287380":
-                out = "Letpulldown1";
+    private String getMachineNameFrom(String nfcId){
+        String machineName = "";
+        switch (nfcId) { //태그별로 트리거(별칭) 지정
+            case "042B7F82287380":
+                machineName = "Letpulldown1";
                 break;
             case "04537982287381":
-                out = "Letpulldown2";
+                machineName = "Letpulldown2";
                 break;
             case "044F7982287381":
-                out = "Letpulldown3";
+                machineName = "Letpulldown3";
                 break;
             case "041EA0627B7280":
-                out = "Letpulldown4";
+                machineName = "Letpulldown4";
                 break;
             default:
-                out = "This is not mine";
+                machineName = "This is not mine";
                 break;
         }
 
         Log.v("test", "nowStatus: " + nowStatus);
         Log.v("test", "nowMachine: " + nowMachine);
-        Log.v("test", "out: " + out);
+        Log.v("test", "out: " + machineName);
 
-        if(nowMachine.equals(out)){ //같은 nfc태그를 두번 태그한 경우
+        if(nowMachine.equals(machineName)){ //같은 nfc태그를 두번 태그한 경우
             //->연결 종료, 현상태 false
             nowStatus=false;
             webSocketClient.close();
         }
-        if(!nowMachine.equals(out)&& nowStatus){ //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
+        if(!nowMachine.equals(machineName)&& nowStatus){ //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
             //즉 현재 운동기구(nowMachine)과 태그한 기구정보(out)이 같고, 현재 사용 중(true)인 경우
 
             webSocketClient.close();
             count = (TextView) findViewById(R.id.count);
             count.setText(""); //횟수 초기화
         }
-        nowMachine=out; //태그한 기구 트리거정보 안드로이드에 저장
+        nowMachine=machineName; //태그한 기구 트리거정보 안드로이드에 저장
         nowStatus=true; //현재 사용 중(true)
-        return out; //기구 트리거 반환
+        return machineName; //기구 트리거 반환
     }
 
 }
