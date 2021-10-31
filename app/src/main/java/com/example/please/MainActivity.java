@@ -33,14 +33,14 @@ public class MainActivity extends AppCompatActivity {
     TextView count; //화면에 운동 횟수 띄움
 
     TextView myUID; //운동기구 이름
-    String nowMachine=""; //현재 기구이름 안드로이드에 임시저장
-    boolean nowStatus=false; //현재 상태: 연결 상태일 경우-true,  비연결-false
+    String nowMachine = ""; //현재 기구이름 안드로이드에 임시저장
+    boolean nowStatus = false; //현재 상태: 연결 상태일 경우-true,  비연결-false
     String nowCount; //현재 횟수 안드로이드에 임시저장
 
     //list of NFC technologies detected:
     //nfc 기능을 사용하고 구현하기 위해 필요한 기술적 세팅으로 보면 될듯
     private final String[][] techList = new String[][]{
-            new String[] {
+            new String[]{
 
                     NfcA.class.getName(), //NFC-A (ISO 14443-3A) 프로퍼티들과 I/O 기능을 제공
                     NfcB.class.getName(), //NFC-B (ISO 14443-3B) 프로퍼티들과 I/O 기능을 제공.
@@ -69,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
         try {
 //            uri = new URI("ws://192.168.45.2:80/"); // "ws://ip주소:포트/"로 서버랑 연결
             uri = new URI("ws://211.207.195.245:8989/"); // "ws://ip주소:포트/"로 서버랑 연결
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
         }
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(message);
                 count = (TextView) findViewById(R.id.count); //xml에서 횟수띄우는 TextView를 찾아 연결
                 count.setText(message); //화면에 띄우는 텍스트 바뀜 (횟수 바뀜)
-                nowCount=message; //현재 횟수 안드로이드에 저장
+                nowCount = message; //현재 횟수 안드로이드에 저장
             }
 
             @Override
@@ -122,12 +121,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
 
         //역시 nfc 기능을 사용하기 위해 필요한 기술적 세팅
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass())
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),0);
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         IntentFilter filter = new IntentFilter();
 
@@ -137,18 +136,18 @@ public class MainActivity extends AppCompatActivity {
 
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        try{ //디버깅 중에 예외처리가 필요하다하여 자체적으로 예외처리해줌
-            nfcAdapter.enableForegroundDispatch(this,pendingIntent,new IntentFilter[]{filter},this.techList);
-        }
-        catch (NullPointerException e){
+        try { //디버깅 중에 예외처리가 필요하다하여 자체적으로 예외처리해줌
+            nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter}, this.techList);
+        } catch (NullPointerException e) {
 
         }
 
     }
+
     @Override
-    protected void onNewIntent(Intent intent){ //태그된 정보 새로 받아옴
+    protected void onNewIntent(Intent intent) { //태그된 정보 새로 받아옴
         super.onNewIntent(intent);
-        if(intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) { //태그된 정보를 넘겨받음
+        if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) { //태그된 정보를 넘겨받음
             myUID = (TextView) findViewById(R.id.machine); //운동기구 이름 띄우는 TextView 찾아 연결
             myUID.setText(getMachineNameFrom(ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)))); //트리거 이름 받아서 화면에 띄움
 
@@ -158,23 +157,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private String ByteArrayToHexString(byte []array) {
-        int i,j,in;
-        String [] hex = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
-        String out="";
+    private String ByteArrayToHexString(byte[] array) {
+        int i, j, in;
+        String[] hex = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
+        String out = "";
 
-        for(j = 0;j<array.length;++j) //nfc 태그 받아온 걸 String형으로 바꿔줌
+        for (j = 0; j < array.length; ++j) //nfc 태그 받아온 걸 String형으로 바꿔줌
         {
             in = (int) array[j] & 0xff;
-            i = (in>>4) & 0x0f;
+            i = (in >> 4) & 0x0f;
             out += hex[i];
-            i = in& 0x0f;
+            i = in & 0x0f;
             out += hex[i];
         }
         return out;
     }
 
-    private String getMachineNameFrom(String nfcId){
+    private String getMachineNameFrom(String nfcId) {
         String machineName = "";
         switch (nfcId) { //태그별로 트리거(별칭) 지정
             case "042B7F82287380":
@@ -198,20 +197,20 @@ public class MainActivity extends AppCompatActivity {
         Log.v("test", "nowMachine: " + nowMachine);
         Log.v("test", "out: " + machineName);
 
-        if(nowMachine.equals(machineName)){ //같은 nfc태그를 두번 태그한 경우
+        if (nowMachine.equals(machineName)) { //같은 nfc태그를 두번 태그한 경우
             //->연결 종료, 현상태 false
-            nowStatus=false;
+            nowStatus = false;
             webSocketClient.close();
         }
-        if(!nowMachine.equals(machineName)&& nowStatus){ //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
+        if (!nowMachine.equals(machineName) && nowStatus) { //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
             //즉 현재 운동기구(nowMachine)과 태그한 기구정보(out)이 같고, 현재 사용 중(true)인 경우
 
             webSocketClient.close();
             count = (TextView) findViewById(R.id.count);
             count.setText(""); //횟수 초기화
         }
-        nowMachine=machineName; //태그한 기구 트리거정보 안드로이드에 저장
-        nowStatus=true; //현재 사용 중(true)
+        nowMachine = machineName; //태그한 기구 트리거정보 안드로이드에 저장
+        nowStatus = true; //현재 사용 중(true)
         return machineName; //기구 트리거 반환
     }
 
