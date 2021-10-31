@@ -152,6 +152,25 @@ public class MainActivity extends AppCompatActivity {
             String machineName = getMachineNameFrom(ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
             myUID.setText(machineName); //트리거 이름 받아서 화면에 띄움
 
+            Log.v("test", "nowStatus: " + isConnectedWithEsp32);
+            Log.v("test", "nowMachine: " + taggedMachine);
+            Log.v("test", "out: " + machineName);
+
+            if (taggedMachine.equals(machineName)) { //같은 nfc태그를 두번 태그한 경우
+                //->연결 종료, 현상태 false
+                isConnectedWithEsp32 = false;
+                webSocketClient.close();
+            }
+            if (!taggedMachine.equals(machineName) && isConnectedWithEsp32) { //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
+                //즉 현재 운동기구(nowMachine)과 태그한 기구정보(out)이 같고, 현재 사용 중(true)인 경우
+
+                webSocketClient.close();
+                count = (TextView) findViewById(R.id.count);
+                count.setText(""); //횟수 초기화
+            }
+            taggedMachine = machineName; //태그한 기구 트리거정보 안드로이드에 저장
+            isConnectedWithEsp32 = true; //현재 사용 중(true)
+
             createWebSocketClient();
             webSocketClient.send(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)); //서버로 트리거 정보 전송
         }
@@ -194,24 +213,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        Log.v("test", "nowStatus: " + isConnectedWithEsp32);
-        Log.v("test", "nowMachine: " + taggedMachine);
-        Log.v("test", "out: " + machineName);
-
-        if (taggedMachine.equals(machineName)) { //같은 nfc태그를 두번 태그한 경우
-            //->연결 종료, 현상태 false
-            isConnectedWithEsp32 = false;
-            webSocketClient.close();
-        }
-        if (!taggedMachine.equals(machineName) && isConnectedWithEsp32) { //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
-            //즉 현재 운동기구(nowMachine)과 태그한 기구정보(out)이 같고, 현재 사용 중(true)인 경우
-
-            webSocketClient.close();
-            count = (TextView) findViewById(R.id.count);
-            count.setText(""); //횟수 초기화
-        }
-        taggedMachine = machineName; //태그한 기구 트리거정보 안드로이드에 저장
-        isConnectedWithEsp32 = true; //현재 사용 중(true)
         return machineName; //기구 트리거 반환
     }
 
