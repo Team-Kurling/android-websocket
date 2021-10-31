@@ -199,9 +199,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateMachine(String machineName){
-        Log.v("test", "nowStatus: " + isConnectedWithEsp32);
-        Log.v("test", "nowMachine: " + taggedMachine);
-        Log.v("test", "out: " + machineName);
+        Log.v("test", "isConnectedWithEsp32: " + isConnectedWithEsp32);
+        Log.v("test", "taggedMachine: " + taggedMachine);
+        Log.v("test", "machineName: " + machineName);
 
         if (taggedMachine.equals(machineName)) { //같은 nfc태그를 두번 태그한 경우
             //->연결 종료, 현상태 false
