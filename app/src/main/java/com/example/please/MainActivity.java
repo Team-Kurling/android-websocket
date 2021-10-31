@@ -59,9 +59,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //createWebSocketClient();  //웹소켓 클라이언트 생성 및 가동(밑에 메서드 정의)
-
     }
 
 
@@ -118,10 +115,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        //webSocketClient.setConnectTimeout(10000); //해당 시간 안에 서버와 연결 못하면 실패
-        //webSocketClient.setReadTimeout(60000); //해당 시간 안에 데이터 못 받아오면 실패
         webSocketClient.addHeader("Origin", "http://developer.example.com");
-        //webSocketClient.enableAutomaticReconnection(5000); //자동 재연결 관련
         webSocketClient.connect(); //연결시도
 
     }
@@ -158,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
             myUID.setText(ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID))); //트리거 이름 받아서 화면에 띄움
 
             createWebSocketClient();
-            //Log.v("test", "test: " + intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
             webSocketClient.send(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)); //서버로 트리거 정보 전송
         }
 
@@ -203,13 +196,9 @@ public class MainActivity extends AppCompatActivity {
             //->연결 종료, 현상태 false
             nowStatus=false;
             webSocketClient.close();
-            //Log.v("test", "test: " + nowStatus);
         }
         if(!nowMachine.equals(out)&& nowStatus){ //사용 중인 nfc태그가 있는 상태에서 다른 nfc를 태그한 경우
             //즉 현재 운동기구(nowMachine)과 태그한 기구정보(out)이 같고, 현재 사용 중(true)인 경우
-
-            //webSocketClient.send("reconnect"); //reconnect 신호를 서버에 보냄->서버 측 코드에서 기구정보를 다시 읽을 준비함
-            //webSocketClient.send(out); //서버에 새로 인식한 기구정보를 보냄
 
             webSocketClient.close();
             count = (TextView) findViewById(R.id.count);
